@@ -22,7 +22,7 @@ module.exports = app;
 var mongoose = require("mongoose");
 
 var db = mongoose.connect("mongodb://localhost:27017/dodleme" , function(err,response) {
-    if (err){console.log("Une erreur est survenue avec MongoDB");}
+    if (err){console.log("Une erreur est survenue avec MongoDB ! " + err);}
     else {console.log("Connexion a mongoDB : OK ! (" + db, " + ", response);}
 });
 

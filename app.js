@@ -1,14 +1,26 @@
 var express = require('express');
 var bodyparser = require('body-parser');
-var mongoose = require("mongoose");
 var cors = require('cors')
+var mongoose = require("mongoose");
 
 var app = express();
 
+/*
+TEST AVEC MONGOOSE ET MONGODB
+
 var db = mongoose.connect("mongodb://localhost:27017/dodleme" , function(err,response) {
     if (err){console.log("Une erreur est survenue avec MongoDB");}
-    else {console.log("Connexion a mongoDB : OK ! (" + db, " + ", response);}
+    else {console.log("Connexion a mongoDB : OK !")}
 });
+
+// créer schema
+var eventSchema = new mongoose.Schema({
+    titre: String,
+    description: String
+});
+
+const Event = mongoose.model('Events', eventSchema);
+*/
 
 app.use(bodyparser.json());
 app.use(cors())
@@ -20,7 +32,7 @@ app.all('*', function (req,res,next) {
     next();
 })
 
-let listeEvents = []
+let listeEvents = [];
 
 app.get('/api/events', function(req, res) {
     res.status(200).json(listeEvents);

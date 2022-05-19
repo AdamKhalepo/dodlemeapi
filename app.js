@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyparser = require('body-parser');
 var mongoose = require("mongoose");
+var cors = require('cors')
 
 var app = express();
 
@@ -10,6 +11,7 @@ var db = mongoose.connect("mongodb://localhost:27017/dodleme" , function(err,res
 });
 
 app.use(bodyparser.json());
+app.use(cors())
 
 app.all('*', function (req,res,next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -18,22 +20,18 @@ app.all('*', function (req,res,next) {
     next();
 })
 
-// REMOVE COMMENT TO TEST
-/*function Evenement(titre, description) {
-    this.titre = titre;
-    this.description = description;
-}
-
-var liste = [];
-*/
-
-
+let listeEvents = []
 
 app.get('/api/events', function(req, res) {
-    // REMOVE COMMENT TO TEST
-    /*let e = new Evenement("Test", "rhezqhrjq");
-    liste.push(e);
-    res.status(200).json(liste);*/
+    res.status(200).json(listeEvents);
+})
+
+app.post('/api/create', function(req,
+                                    res) {
+    // Récup param
+    let event = req.body;
+    listeEvents.push(event)
+    res.status(201).json(event);
 })
 
 app.listen(3000, function () {

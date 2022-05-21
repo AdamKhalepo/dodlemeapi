@@ -2,25 +2,41 @@ var express = require('express');
 var bodyparser = require('body-parser');
 var cors = require('cors')
 var mongoose = require("mongoose");
+const User = require("./mongoose/User");
 
 var app = express();
 
 /*
 TEST AVEC MONGOOSE ET MONGODB
 
-var db = mongoose.connect("mongodb://localhost:27017/dodleme" , function(err,response) {
-    if (err){console.log("Une erreur est survenue avec MongoDB");}
+/* connection with mongoDB server */
+var db = mongoose.connect("mongodb://localhost:27017/dodleme", function(err,response) {
+    if (err){console.log(err);}
     else {console.log("Connexion a mongoDB : OK !")}
 });
 
-// créer schema
-var eventSchema = new mongoose.Schema({
-    titre: String,
-    description: String
-});
+testMongoose();
 
-const Event = mongoose.model('Events', eventSchema);
-*/
+async function testMongoose() {
+    //Création de l'utilisateur Lionel
+    const user = new User({username:"Lionel"});
+    user.save().then(() => console.log("User lionel saved"));
+
+    //Récupérer tous les users
+    const getUsers = await User.find();
+    console.log(getUsers);
+
+    //Récupérer l'utilisateur Lionel
+    const getUserLionel = await User.find({username:"Lionel"});
+    console.log(getUserLionel);
+
+    //Supprimer un utilisateur qui s'appelle Lionel
+    //Si on veut en supprimer plusieurs Lionel utiliser User.deleteMany({username:"Lionel"})
+    const deleteUserLionel = await User.deleteOne({username:"Lionel"});
+    console.log(deleteUserLionel);
+}
+
+/* FIN TESTS AVEC MONGOOSE ET MONGODB */
 
 app.use(bodyparser.json());
 app.use(cors())

@@ -7,16 +7,11 @@ const Event = require("./mongoose/Event");
 
 var app = express();
 
-/*
-TEST AVEC MONGOOSE ET MONGODB
-
 /* connection with mongoDB server */
 var db = mongoose.connect("mongodb://localhost:27017/dodleme", function(err,response) {
     if (err){console.log(err);}
     else {console.log("Connexion a mongoDB : OK !")}
 });
-
-/* FIN TESTS AVEC MONGOOSE ET MONGODB */
 
 app.use(bodyparser.json());
 app.use(cors())
@@ -30,7 +25,6 @@ app.all('*', function (req,res,next) {
 
 app.get('/api/events', async (req, res) => {
     const events = await Event.find();
-    console.log(events)
     res.send(events);
 })
 
@@ -39,13 +33,14 @@ app.delete('/api/events', async (req, res) => {
     res.send("Suppression de tous les events OK");
 })
 
-app.post('/api/create', function(req,
-                                    res) {
+app.post('/api/create', function(req, res) {
     // Récup param
     let event_body = req.body;
-    const event = new Event({titre:event_body.titre,
-                                  description: event_body.description,
-                                  creneaux:event_body.creneaux});
+    const event = new Event({
+        titre:event_body.titre,
+        description: event_body.description,
+        creneaux:event_body.creneaux});
+
     event.save();
     res.status(201).json(event);
 })

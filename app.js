@@ -3,6 +3,7 @@ var bodyparser = require('body-parser');
 var cors = require('cors')
 var mongoose = require("mongoose");
 const User = require("./mongoose/User");
+const Event = require("./mongoose/Event");
 
 var app = express();
 
@@ -14,27 +15,6 @@ var db = mongoose.connect("mongodb://localhost:27017/dodleme", function(err,resp
     if (err){console.log(err);}
     else {console.log("Connexion a mongoDB : OK !")}
 });
-
-testMongoose();
-
-async function testMongoose() {
-    //Création de l'utilisateur Lionel
-    const user = new User({username:"Lionel"});
-    user.save().then(() => console.log("User lionel saved"));
-
-    //Récupérer tous les users
-    const getUsers = await User.find();
-    console.log(getUsers);
-
-    //Récupérer l'utilisateur Lionel
-    const getUserLionel = await User.find({username:"Lionel"});
-    console.log(getUserLionel);
-
-    //Supprimer un utilisateur qui s'appelle Lionel
-    //Si on veut en supprimer plusieurs Lionel utiliser User.deleteMany({username:"Lionel"})
-    const deleteUserLionel = await User.deleteOne({username:"Lionel"});
-    console.log(deleteUserLionel);
-}
 
 /* FIN TESTS AVEC MONGOOSE ET MONGODB */
 
@@ -48,17 +28,25 @@ app.all('*', function (req,res,next) {
     next();
 })
 
-let listeEvents = [];
+app.get('/api/events', async (req, res) => {
+    const events = await Event.find();
+    console.log(events)
+    res.send(events);
+})
 
-app.get('/api/events', function(req, res) {
-    res.status(200).json(listeEvents);
+app.delete('/api/events', async (req, res) => {
+    const events = await Event.deleteMany({});
+    res.send("Suppression de tous les events OK");
 })
 
 app.post('/api/create', function(req,
                                     res) {
     // Récup param
-    let event = req.body;
-    listeEvents.push(event)
+    let event_body = req.body;
+    const event = new Event({titre:event_body.titre,
+                                  description: event_body.description,
+                                  creneaux:event_body.creneaux});
+    event.save();
     res.status(201).json(event);
 })
 

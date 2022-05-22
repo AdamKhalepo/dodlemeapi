@@ -71,6 +71,12 @@ app.get('/api/events', async (req, res) => {
     res.send(events);
 })
 
+// GET EVENTS CREATED BY USERNAME
+app.get('/api/events/:username', async (req, res) => {
+    const events = await Event.find({createur: req.params.username});
+    res.send(events);
+})
+
 // DELETE ALL EVENTS
 app.delete('/api/events', async (req, res) => {
     const events = await Event.deleteMany({});

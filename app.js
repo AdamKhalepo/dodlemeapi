@@ -23,6 +23,29 @@ app.all('*', function (req,res,next) {
     next();
 })
 
+// USERS
+app.get('/api/users/:username', async (req, res) => {
+    const user = await User.findOne({username: req.params.username});
+    res.send(user);
+})
+
+app.post('/api/users', function (req, res) {
+    // Récup param
+    let user_body = req.body;
+    const user = new User({
+        username:user_body.username,
+        nom: user_body.nom,
+        prenom:user_body.prenom});
+    user.save(function(err, user) {
+        if (err) {
+            console.log(err);
+            res.send(400, 'Bad Request');
+        }
+        res.status(201).json(user);
+    });
+})
+
+// EVENTS
 app.get('/api/events', async (req, res) => {
     const events = await Event.find();
     res.send(events);

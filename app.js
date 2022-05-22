@@ -23,12 +23,32 @@ app.all('*', function (req,res,next) {
     next();
 })
 
-// USERS
+// GET USER BY USERNAME
 app.get('/api/users/:username', async (req, res) => {
     const user = await User.findOne({username: req.params.username});
     res.send(user);
 })
 
+// MOSTLY FOR DEBUG GET ALL USERS
+app.get('/api/users/', async (req, res) => {
+    const user = await User.find({});
+    res.send(user);
+})
+
+// DELETE ALL USERS
+app.delete('/api/users', async (req, res) => {
+    const USER = await User.deleteMany({});
+    res.send("Suppression de tous les USERS OK");
+})
+
+// DELETE USER BY USERNAME
+app.delete('/api/users/:username', async (req, res) => {
+    await User.deleteOne({username: req.params.username});
+    const users = await User.find({})
+    res.send(users);
+})
+
+// CREATE NEW USER
 app.post('/api/users', function (req, res) {
     // Récup param
     let user_body = req.body;
@@ -45,17 +65,19 @@ app.post('/api/users', function (req, res) {
     });
 })
 
-// EVENTS
+// GET ALL EVENTS
 app.get('/api/events', async (req, res) => {
     const events = await Event.find();
     res.send(events);
 })
 
+// DELETE ALL EVENTS
 app.delete('/api/events', async (req, res) => {
     const events = await Event.deleteMany({});
     res.send("Suppression de tous les events OK");
 })
 
+// CREATE AN EVENT
 app.post('/api/create', function(req, res) {
     // Récup param
     let event_body = req.body;

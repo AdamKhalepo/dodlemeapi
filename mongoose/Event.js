@@ -9,6 +9,7 @@ const eventSchema = new mongoose.Schema({
         date_fin: String,
         heure_fin: String
     }],
+    createur: String
 });
 
 module.exports = mongoose.model("Event",eventSchema);

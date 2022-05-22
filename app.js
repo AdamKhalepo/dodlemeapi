@@ -84,8 +84,9 @@ app.post('/api/create', function(req, res) {
     const event = new Event({
         titre:event_body.titre,
         description: event_body.description,
-        creneaux:event_body.creneaux});
-
+        creneaux:event_body.creneaux,
+        createur:event_body.createur});
+    console.log(event)
     event.save();
     res.status(201).json(event);
 })

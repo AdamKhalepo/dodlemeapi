@@ -3,7 +3,8 @@ var bodyparser = require('body-parser');
 var cors = require('cors')
 var mongoose = require("mongoose");
 const User = require("./mongoose/User");
-const Event = require("./mongoose/Event");
+const {Event} = require("./mongoose/Event");
+const {Creneau} = require("./mongoose/Event");
 
 var app = express();
 
@@ -77,6 +78,20 @@ app.get('/api/events/:username', async (req, res) => {
     res.send(events);
 })
 
+// GET EVENTS WITH EVENT_ID
+app.get('/api/event/:id', async (req, res) => {
+    console.log(req.params.id)
+    const events = await Event.findById(req.params.id);
+    res.send(events);
+})
+
+// GET CRENEAU WITH CRENEAU_ID
+app.get('/api/creneau/:id', async (req, res) => {
+    console.log(req.params.id)
+    const creneau = await Event.find({"creneaux._id": req.params.id}, {"creneaux.$": 1});
+    res.send(creneau);
+})
+
 // DELETE ALL EVENTS
 app.delete('/api/events', async (req, res) => {
     const events = await Event.deleteMany({});
@@ -91,7 +106,9 @@ app.post('/api/create', function(req, res) {
         titre:event_body.titre,
         description: event_body.description,
         creneaux:event_body.creneaux,
-        createur:event_body.createur});
+        createur:event_body.createur,
+        participants: [""],
+    });
     console.log(event)
     event.save();
     res.status(201).json(event);

@@ -114,6 +114,26 @@ app.post('/api/create', function(req, res) {
     res.status(201).json(event);
 })
 
+//ADD USER TO EVENT
+app.patch('/api/event/creneau/addUser',async function (req, res) {
+    //Récup param
+    let body = req.body;
+    const creneauAdd = await Event.updateOne({"creneaux._id":mongoose.Types.ObjectId(body.idCreneau)},{$push: {"creneaux.$.participants.participants_OK":body.username}});
+    //On supprime l'utilisateur de la colonne participants_NOK
+    const creneauRemove = await Event.updateOne({"creneaux._id":mongoose.Types.ObjectId(body.idCreneau)},{$pull: {"creneaux.$.participants.participants_NOK":body.username}});
+    res.json(creneauAdd);
+})
+
+//REMOVE USER TO EVENT
+app.patch('/api/event/creneau/removeUser',async function (req, res) {
+    //Récup param
+    let body = req.body;
+    const creneauAdd = await Event.updateOne({"creneaux._id":mongoose.Types.ObjectId(body.idCreneau)},{$push: {"creneaux.$.participants.participants_NOK":body.username}});
+    const creneauRemove = await Event.updateOne({"creneaux._id":mongoose.Types.ObjectId(body.idCreneau)},{$pull: {"creneaux.$.participants.participants_OK":body.username}});
+
+    res.json(creneauAdd);
+})
+
 app.listen(3000, function () {
     console.log("Server running...")
 })

@@ -78,6 +78,12 @@ app.get('/api/events/:username', async (req, res) => {
     res.send(events);
 })
 
+// GET EVENTS PARTICIPATED BY USERNAME
+app.get('/api/eventsParticipate/:username', async (req,res) => {
+    const events = await Event.find({"creneaux.participants.participants_OK":req.params.username},{"creneaux.$":1,titre:1,description:1});
+    res.send(events);
+})
+
 // GET EVENTS WITH EVENT_ID
 app.get('/api/event/:id', async (req, res) => {
     console.log(req.params.id)

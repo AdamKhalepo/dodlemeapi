@@ -80,7 +80,9 @@ app.get('/api/events/:username', async (req, res) => {
 
 // GET EVENTS PARTICIPATED BY USERNAME
 app.get('/api/eventsParticipate/:username', async (req,res) => {
-    const events = await Event.find({"creneaux.participants.participants_OK":req.params.username},{"creneaux.$":1,titre:1,description:1});
+    const events = await Event.find({$or: [
+            {"creneaux.participants.participants_OK":req.params.username},
+            {"creneaux.participants.participants_NOT_OK":req.params.username}]});
     res.send(events);
 })
 

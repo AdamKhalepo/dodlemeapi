@@ -145,6 +145,14 @@ app.patch('/api/events/:event_id/creneaux/:creneau_id',async function (req, res)
     res.json(event)
 })
 
+//DELETE A SPECIFIC EVENT BY ITS ID
+app.delete('/api/event/:event_id',async (req, res) => {
+    const id_event = req.params.event_id;
+    await Event.deleteOne({_id:id_event});
+    res.send("L'évènement "+ id_event + " à correctement été supprimé.");
+    console.log(id_event);
+})
+
 app.listen(3000, function () {
     console.log("Server running...")
 })

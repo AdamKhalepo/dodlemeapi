@@ -38,8 +38,10 @@ app.get('/api/users/', async (req, res) => {
 
 // DELETE ALL USERS
 app.delete('/api/users', async (req, res) => {
-    const USER = await User.deleteMany({});
-    res.send("Suppression de tous les USERS OK");
+    await User.deleteMany({});
+    const users = await User.find({})
+    res.send(users);
+
 })
 
 // DELETE USER BY USERNAME
@@ -73,13 +75,13 @@ app.get('/api/events', async (req, res) => {
 })
 
 // GET EVENTS CREATED BY USERNAME
-app.get('/api/events/:username', async (req, res) => {
+app.get('/api/events/created/:username', async (req, res) => {
     const events = await Event.find({createur: req.params.username});
     res.send(events);
 })
 
 // GET EVENTS PARTICIPATED BY USERNAME
-app.get('/api/eventsParticipate/:username', async (req,res) => {
+app.get('/api/events/participated/:username', async (req,res) => {
     const events = await Event.find({$or: [
             {"creneaux.participants.participants_OK":req.params.username},
             {"creneaux.participants.participants_NOT_OK":req.params.username}]});
@@ -102,8 +104,9 @@ app.get('/api/creneau/:id', async (req, res) => {
 
 // DELETE ALL EVENTS
 app.delete('/api/events', async (req, res) => {
-    const events = await Event.deleteMany({});
-    res.send("Suppression de tous les events OK");
+    await Event.deleteMany({});
+    const events = await Event.find();
+    res.json(events)
 })
 
 // CREATE AN EVENT
@@ -116,8 +119,9 @@ app.post('/api/create', function(req, res) {
         creneaux:event_body.creneaux,
         createur:event_body.createur,
         participants: [""],
+        isClosed: false,
+        creneauFinal: event_body.creneauFinal
     });
-    console.log(event)
     event.save();
     res.status(201).json(event);
 })
@@ -143,16 +147,27 @@ app.patch('/api/events/:event_id/creneaux/:creneau_id',async function (req, res)
         await Event.updateOne({"creneaux._id":creneau_id},
             {$push: {"creneaux.$.participants.participants_NOT_OK":body.username}});
     }
-    const event = await Event.find();
-    res.json(event)
+    const events = await Event.find();
+    res.json(events)
+})
+
+// ADD CRENEAU FINAL
+app.patch('/api/events/:event_id/creneaufinal',async function (req, res) {
+    //Récup param
+    let body = req.body;
+    console.log(body)
+    await Event.updateOne({"creneaux._id":body._id},
+        {"creneauFinal":body, "isClosed":true});
+    const events = await Event.find();
+    res.json(events)
 })
 
 //DELETE A SPECIFIC EVENT BY ITS ID
 app.delete('/api/event/:event_id',async (req, res) => {
     const id_event = req.params.event_id;
     await Event.deleteOne({_id:id_event});
-    res.send("L'évènement "+ id_event + " à correctement été supprimé.");
-    console.log(id_event);
+    const events = await Event.find();
+    res.json(events)
 })
 
 app.listen(3000, function () {

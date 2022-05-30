@@ -16,6 +16,8 @@ const eventSchema = new mongoose.Schema({
     description:String,
     creneaux: [creneauSchema],
     createur: String,
+    isClosed: Boolean,
+    creneauFinal: creneauSchema
 });
 
 module.exports = {
